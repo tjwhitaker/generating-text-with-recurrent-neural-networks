@@ -1,12 +1,18 @@
+import utils
+import string
+
 import torch
 import torch.nn as nn
+from torch.autograd import Variable
 
 # Config
-predict_length = 100
-temperature = 0.8
+characters = string.printable
+input_size = output_size = len(string.printable)
+hidden_size = 100
+num_layers = 1
 
 class RNN(nn.Module):
-	def __init__(self, input_size, hidden_size, output_size, num_layers=1):
+	def __init__(self):
 		super(RNN, self).__init__()
 
 		self.input_size = input_size
@@ -29,7 +35,7 @@ class RNN(nn.Module):
 
 # Feed one char at a time to network
 # Use outputs as a probability distribution
-def evaluate(prime='A', network):
+def generate(network, prime, predict_length, temperature):
 	hidden = network.init_hidden()
 	prime_input = utils.char_tensor(prime)
 	predicted = prime
@@ -41,15 +47,29 @@ def evaluate(prime='A', network):
 	input_char = prime_input[-1]
 
 	for p in range(predict_length):
-		output_char, hidden = network(input_char, hidden)
+		output, hidden = network(input_char, hidden)
 
 		# Sample from the network using the distribution
-		output_distribution = output_char.data.view(-1).div(temperature).exp()
+		output_distribution = output.data.view(-1).div(temperature).exp()
 		top_index = torch.multinomial(output_distribution, 1)[0]
 
 		# Add predicted char to string and use as next input
 		predicted_char = characters[top_index]
 		predicted += predicted_char
-		inp = char_tensor(predicted_char)
+		input_char = utils.char_tensor(predicted_char)
 
 	return predicted
+
+def train(network, input_tensor, target_tensor, chunk_length, optimizer, criterion):
+	hidden = network.init_hidden()
+	network.zero_grad()
+	loss = 0
+
+	for c in range(chunk_length):
+		output, hidden = network(input_tensor[c], hidden)
+		loss += criterion(output, target_tensor[c].unsqueeze(0))
+
+	loss.backward()
+	optimizer.step()
+
+	return loss.data.item() / chunk_length
