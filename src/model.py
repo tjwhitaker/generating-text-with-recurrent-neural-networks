@@ -1,6 +1,10 @@
 import torch
 import torch.nn as nn
 
+# Config
+predict_length = 100
+temperature = 0.8
+
 class RNN(nn.Module):
 	def __init__(self, input_size, hidden_size, output_size, num_layers=1):
 		super(RNN, self).__init__()
@@ -22,3 +26,30 @@ class RNN(nn.Module):
 
 	def init_hidden(self):
 		return Variable(torch.zeros(self.num_layers, 1, self.hidden_size))
+
+# Feed one char at a time to network
+# Use outputs as a probability distribution
+def evaluate(prime='A', network):
+	hidden = network.init_hidden()
+	prime_input = utils.char_tensor(prime)
+	predicted = prime
+
+	# Use prime string to build hidden state
+	for p in range(len(prime) - 1):
+		_, hidden = network(prime_input[p], hidden)
+
+	input_char = prime_input[-1]
+
+	for p in range(predict_length):
+		output_char, hidden = network(input_char, hidden)
+
+		# Sample from the network using the distribution
+		output_distribution = output_char.data.view(-1).div(temperature).exp()
+		top_index = torch.multinomial(output_distribution, 1)[0]
+
+		# Add predicted char to string and use as next input
+		predicted_char = characters[top_index]
+		predicted += predicted_char
+		inp = char_tensor(predicted_char)
+
+	return predicted
