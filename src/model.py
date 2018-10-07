@@ -41,7 +41,7 @@ def generate(network, prime, predict_length, temperature):
 	predicted = prime
 
 	# Use prime string to build hidden state
-	for p in range(len(prime) - 1):
+	for p in range(len(prime)):
 		_, hidden = network(prime_input[p], hidden)
 
 	input_char = prime_input[-1]

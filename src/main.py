@@ -10,16 +10,16 @@ import torch.nn as nn
 
 
 # Config
-epochs = 20000
+epochs = 2000
 print_every = 100
 learning_rate = 0.005
 predict_length = 100
-temperature = 0.6
+temperature = 0.4
 chunk_length = 200
 
 characters = string.printable
 
-input_string = unidecode.unidecode(open('../input/notorious-tupac.txt').read())
+input_string = unidecode.unidecode(open('../input/frost.txt').read())
 
 network = model.RNN()
 optimizer = torch.optim.Adam(network.parameters(), lr=learning_rate)
@@ -36,5 +36,5 @@ for epoch in range(epochs):
 
 song = model.generate(network, random.choice(string.ascii_uppercase), 2000, temperature)
 
-with open('../output/roborap.txt', w) as file:
+with open('../output/frost.txt', 'w') as file:
 	file.write(song)
