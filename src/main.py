@@ -8,18 +8,17 @@ import unidecode
 import torch
 import torch.nn as nn
 
-
 # Config
 epochs = 2000
 print_every = 100
 learning_rate = 0.005
 predict_length = 100
-temperature = 0.4
+temperature = 0.5
 chunk_length = 200
 
 characters = string.printable
 
-input_string = unidecode.unidecode(open('../input/frost.txt').read())
+input_string = unidecode.unidecode(open('../input/old-man-and-the-sea.txt').read())
 
 network = model.RNN()
 optimizer = torch.optim.Adam(network.parameters(), lr=learning_rate)
@@ -34,7 +33,6 @@ for epoch in range(epochs):
 		print(loss)
 		print(model.generate(network, random.choice(string.ascii_uppercase), predict_length, temperature), '\n')
 
-song = model.generate(network, random.choice(string.ascii_uppercase), 2000, temperature)
-
-with open('../output/frost.txt', 'w') as file:
-	file.write(song)
+with open('../output/old-man-and-the-sea.txt', 'a') as file:
+	for i in range(10):
+		file.write(model.generate(network, random.choice(string.ascii_uppercase), 200, temperature))
