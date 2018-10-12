@@ -1,4 +1,5 @@
 import model
+import settings
 import utils
 
 import random
@@ -9,30 +10,23 @@ import torch
 import torch.nn as nn
 
 # Config
-epochs = 2000
-print_every = 100
-learning_rate = 0.005
-predict_length = 100
-temperature = 0.5
-chunk_length = 200
+settings.init()
 
-characters = string.printable
+input_string = unidecode.unidecode(open(INPUT_PATH, 'r').read())
 
-input_string = unidecode.unidecode(open('../input/old-man-and-the-sea.txt').read())
-
-network = model.RNN()
-optimizer = torch.optim.Adam(network.parameters(), lr=learning_rate)
+network = model.RNN(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, NUM_LAYERS)
+optimizer = torch.optim.Adam(network.parameters(), lr=LEARNING_RATE)
 criterion = nn.CrossEntropyLoss()
 
-for epoch in range(epochs):
-	input_tensor, target_tensor = utils.random_training_set(input_string, chunk_length)
+for epoch in range(EPOCHS):
+	input_tensor, target_tensor = utils.random_training_set(input_string, CHUNK_LENGTH)
 
-	loss = model.train(network, input_tensor, target_tensor, chunk_length, optimizer, criterion)
+	loss = model.train(network, input_tensor, target_tensor, CHUNK_LENGTH, optimizer, criterion)
 
-	if epoch % print_every == 0:
+	if epoch % PRINT_EVERY == 0:
 		print(loss)
-		print(model.generate(network, random.choice(string.ascii_uppercase), predict_length, temperature), '\n')
+		print(model.generate(network, random.choice(string.ascii_uppercase), PREDICT_LENGTH, TEMPERATURE), '\n')
 
-with open('../output/old-man-and-the-sea.txt', 'a') as file:
+with open(OUTPUT_PATH, 'a') as file:
 	for i in range(10):
-		file.write(model.generate(network, random.choice(string.ascii_uppercase), 200, temperature))
+		file.write(model.generate(network, random.choice(string.ascii_uppercase), 200, TEMPERATURE))

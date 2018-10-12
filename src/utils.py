@@ -4,9 +4,6 @@ import string
 import torch
 from torch.autograd import Variable
 
-characters = string.printable
-
-
 # Take random group of x characters from string 
 def random_chunk(data, chunk_length):
 	start = random.randint(0, len(data) - chunk_length)
@@ -17,7 +14,7 @@ def random_chunk(data, chunk_length):
 def char_tensor(chunk):
 	tensor = torch.zeros(len(chunk)).long()
 	for c in range(len(chunk)):
-		tensor[c] = characters.index(chunk[c])
+		tensor[c] = CHARACTERS.index(chunk[c])
 
 	return Variable(tensor)
 
