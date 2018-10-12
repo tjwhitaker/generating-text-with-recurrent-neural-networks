@@ -10,8 +10,6 @@ def init():
     CHARACTERS = string.printable
     INPUT_PATH = '../input/old-man-and-the-sea.txt'
     OUTPUT_PATH = '../output/old-man-and-the-sea.txt'
-
-    # Model Config
     INPUT_SIZE = OUTPUT_SIZE = len(CHARACTERS)
     HIDDEN_SIZE = 100
     NUM_LAYERS = 1
