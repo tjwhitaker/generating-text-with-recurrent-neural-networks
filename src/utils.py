@@ -1,8 +1,8 @@
 import random
 import string
-
 import torch
 from torch.autograd import Variable
+from settings import CHARACTERS
 
 # Take random group of x characters from string 
 def random_chunk(data, chunk_length):

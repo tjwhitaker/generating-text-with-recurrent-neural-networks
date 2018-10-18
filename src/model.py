@@ -1,9 +1,9 @@
 import utils
 import string
-
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
+from settings import CHARACTERS
 
 class RNN(nn.Module):
 	def __init__(self, input_size, hidden_size, output_size, num_layers):
@@ -48,7 +48,7 @@ def generate(network, prime, predict_length, temperature):
 		top_index = torch.multinomial(output_distribution, 1)[0]
 
 		# Add predicted char to string and use as next input
-		predicted_char = characters[top_index]
+		predicted_char = CHARACTERS[top_index]
 		predicted += predicted_char
 		input_char = utils.char_tensor(predicted_char)
 

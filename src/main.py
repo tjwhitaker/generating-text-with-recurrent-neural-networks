@@ -1,16 +1,11 @@
 import model
-import settings
 import utils
-
 import random
-import string
 import unidecode
-
+import string
 import torch
 import torch.nn as nn
-
-# Config
-settings.init()
+from settings import INPUT_PATH, INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE, EPOCHS, NUM_LAYERS, LEARNING_RATE, CHUNK_LENGTH, PREDICT_LENGTH, TEMPERATURE, PRINT_EVERY
 
 input_string = unidecode.unidecode(open(INPUT_PATH, 'r').read())
 
